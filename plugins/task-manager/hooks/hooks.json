@@ -1,18 +1,6 @@
 {
-  "description": "Task manager hooks: auto-approve paths and checkpoint tracking",
+  "description": "Task checkpoint hooks for tracking progress",
   "hooks": {
-    "PreToolUse": [
-      {
-        "matcher": "Write|Edit|Bash",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/auto-approve-paths.sh",
-            "timeout": 5
-          }
-        ]
-      }
-    ],
     "PostToolUse": [
       {
         "matcher": "Read|Grep|Glob|Bash|LSP",
