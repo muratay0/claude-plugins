@@ -10,7 +10,7 @@ Last Updated: 2025-01-19
 
 ## Purpose
 
-Ensure `~/.claude/task-manager/state.json` is synchronized with the actual task folders in `~/.claude/task-manager/tasks/active/`, `~/.claude/task-manager/tasks/completed/`, and `~/.claude/task-manager/tasks/cancelled/`. Detects discrepancies and optionally fixes them.
+Ensure `~/task-manager/state.json` is synchronized with the actual task folders in `~/task-manager/tasks/active/`, `~/task-manager/tasks/completed/`, and `~/task-manager/tasks/cancelled/`. Detects discrepancies and optionally fixes them.
 
 ---
 
@@ -31,19 +31,19 @@ Ensure `~/.claude/task-manager/state.json` is synchronized with the actual task 
 
 ```bash
 # Get all active tasks
-ACTIVE_TASKS=$(ls -d ~/.claude/task-manager/tasks/active/TASK-* 2>/dev/null | xargs -n1 basename)
+ACTIVE_TASKS=$(ls -d ~/task-manager/tasks/active/TASK-* 2>/dev/null | xargs -n1 basename)
 
 # Get all completed tasks
-COMPLETED_TASKS=$(ls -d ~/.claude/task-manager/tasks/completed/TASK-* 2>/dev/null | xargs -n1 basename)
+COMPLETED_TASKS=$(ls -d ~/task-manager/tasks/completed/TASK-* 2>/dev/null | xargs -n1 basename)
 
 # Get all cancelled tasks
-CANCELLED_TASKS=$(ls -d ~/.claude/task-manager/tasks/cancelled/TASK-* 2>/dev/null | xargs -n1 basename)
+CANCELLED_TASKS=$(ls -d ~/task-manager/tasks/cancelled/TASK-* 2>/dev/null | xargs -n1 basename)
 ```
 
 ### Step 2: Parse Current state.json
 
 ```bash
-Read: ~/.claude/task-manager/state.json
+Read: ~/task-manager/state.json
 ```
 
 Extract:
@@ -76,7 +76,7 @@ For each detected task folder, read task.md to get:
 ## Task Sync Report
 
 **Scan Time:** <current datetime>
-**State File:** ~/.claude/task-manager/state.json
+**State File:** ~/task-manager/state.json
 
 ### Summary
 | Category | Count |
@@ -93,13 +93,13 @@ For each detected task folder, read task.md to get:
 Tasks that exist in folders but not in state.json:
 | Task | Location | Status |
 |------|----------|--------|
-| TASK-012 | ~/.claude/task-manager/tasks/active/TASK-012-new-feature/ | pending |
+| TASK-012 | ~/task-manager/tasks/active/TASK-012-new-feature/ | pending |
 
 #### Orphaned in State
 Tasks in state but folders don't exist:
 | Task | State Section | Expected Location |
 |------|---------------|-------------------|
-| TASK-999 | tasks.active | ~/.claude/task-manager/tasks/active/TASK-999-*/ |
+| TASK-999 | tasks.active | ~/task-manager/tasks/active/TASK-999-*/ |
 
 #### Wrong Section
 Tasks in wrong state section:
@@ -169,7 +169,7 @@ If ID_MISMATCH detected:
 ```bash
 # Update state
 state.lastUpdated = "<ISO-8601 timestamp>"
-Write: ~/.claude/task-manager/state.json
+Write: ~/task-manager/state.json
 ```
 
 ### Step 6b: Rebuild Mode (if --rebuild)
@@ -193,7 +193,7 @@ state = {
   }
 }
 
-Write: ~/.claude/task-manager/state.json
+Write: ~/task-manager/state.json
 ```
 
 ### Step 7: Output Result
@@ -240,7 +240,7 @@ User: /task-manager:sync
 ## Task Sync Report
 
 **Scan Time:** 2025-01-19 10:00:00
-**State File:** ~/.claude/task-manager/state.json
+**State File:** ~/task-manager/state.json
 
 ### Summary
 | Category | Count |

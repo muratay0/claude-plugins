@@ -51,18 +51,18 @@ Manage subtasks within a parent task. Subtasks allow breaking down large tasks i
 
 ```bash
 # Read state.json
-Read: ~/.claude/task-manager/state.json
+Read: ~/task-manager/state.json
 
 # Find task in active tasks
 task = state.tasks.active.find(t => t.id === "<TASK-ID>")
-TASK_DIR = ~/.claude/task-manager/tasks/active/<TASK-ID>-<slug>/
+TASK_DIR = ~/task-manager/tasks/active/<TASK-ID>-<slug>/
 ```
 
 #### Step 2: Determine Next Subtask ID
 
 ```bash
 # List existing subtasks
-ls ~/.claude/task-manager/tasks/active/<TASK-ID>-<slug>/subtasks/
+ls ~/task-manager/tasks/active/<TASK-ID>-<slug>/subtasks/
 
 # Count existing subtasks and increment
 # Format: 001, 002, 003, etc.
@@ -146,7 +146,7 @@ Current subtask count: X
 #### Step 1: Locate Parent Task
 
 ```bash
-Read: ~/.claude/task-manager/state.json
+Read: ~/task-manager/state.json
 # Find task location
 ```
 

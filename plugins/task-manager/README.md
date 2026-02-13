@@ -8,8 +8,9 @@ This plugin provides a complete task management system that:
 - Creates and tracks tasks from various sources (manual, Jira, ideas)
 - Enables session continuity across Claude Code sessions
 - Archives completed tasks with full history
-- Enforces **single active task** (only one `in_progress` at a time)
+- Supports **multi-session** work (different tasks `in_progress` across different terminals)
 - Auto-checkpoints to prevent context loss
+- Session-scoped tool counters and lifecycle hooks
 
 ## Installation
 
@@ -37,7 +38,7 @@ claude plugin marketplace add etcworld/claude-plugins
 
 ## Data Location
 
-All task data is stored in `~/.claude/task-manager/` - **not in your project directory**.
+All task data is stored in `~/task-manager/` - **not in your project directory**.
 
 This means:
 - Tasks are shared across all your projects
@@ -52,6 +53,7 @@ The plugin automatically creates the directory structure on first use.
 |---------|-------------|
 | `/task-manager:create` | Create a new task from title, Jira ticket, or idea |
 | `/task-manager:continue` | Resume work on an existing task |
+| `/task-manager:pause` | Pause a task and clear session binding |
 | `/task-manager:complete` | Complete a task with user approval and archive it |
 | `/task-manager:checkpoint` | Manually save checkpoint for current task |
 | `/task-manager:subtask` | Manage subtasks (add, list, done, status) |
@@ -69,6 +71,28 @@ The `task-lifecycle` skill automatically activates when you mention:
 
 This provides seamless session continuity without explicit commands.
 
+## Multi-Session Support
+
+Work on different tasks from multiple terminals simultaneously:
+
+- **Session-scoped counters** — Each terminal has its own `.tool-count-{session_id}` file
+- **No auto-pause** — `/continue TASK-X` in Terminal A does NOT pause Terminal B's task
+- **Session tracking** — Each in_progress task records its `sessionId` in state.json
+- **Cross-session warnings** — If you try to `/continue` a task active in another session, you'll be warned
+- **SessionStart hook** — New sessions automatically detect and display active tasks
+- **SessionEnd hook** — Session-specific counter files are cleaned up on exit
+
+### Example: Two Terminals
+
+```
+Terminal A: /task-manager:continue TASK-014   → works on HMAC implementation
+Terminal B: /task-manager:continue TASK-020   → works on cache fix
+
+state.json:
+  TASK-014: { status: "in_progress", sessionId: "abc123" }
+  TASK-020: { status: "in_progress", sessionId: "def456" }
+```
+
 ## Automatic Checkpoint Reminders
 
 The plugin includes hooks that automatically remind Claude to checkpoint:
@@ -83,11 +107,12 @@ See `hooks/README.md` for configuration options.
 
 ## Directory Structure
 
-All data is stored in `~/.claude/task-manager/`:
+All data is stored in `~/task-manager/`:
 
 ```
-~/.claude/task-manager/
-├── state.json             # Task state (source of truth)
+~/task-manager/
+├── state.json             # Task state (source of truth, includes sessionId per task)
+├── .tool-count-{session}  # Per-session tool call counters (auto-cleaned)
 └── tasks/
     ├── active/            # Active tasks
     │   └── TASK-XXX-slug/
@@ -211,7 +236,7 @@ All data is stored in `~/.claude/task-manager/`:
 - **Session recovery** - New session can resume from exact point using disk state
 
 ```
-~/.claude/task-manager/tasks/active/TASK-XXX/
+~/task-manager/tasks/active/TASK-XXX/
 ├── task.md           # Current state + position markers
 ├── context/
 │   ├── research.md   # Findings (survives context clear)

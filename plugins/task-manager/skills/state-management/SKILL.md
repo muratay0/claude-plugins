@@ -14,8 +14,8 @@ Manages the `state.json` file that stores all task and idea metadata.
 ## State File Location
 
 ```
-~/.claude/task-manager/state.json        # Main state file
-~/.claude/task-manager/state.backup.json # Auto-backup before each write
+~/task-manager/state.json        # Main state file
+~/task-manager/state.backup.json # Auto-backup before each write
 ```
 
 ---
@@ -51,7 +51,9 @@ Manages the `state.json` file that stores all task and idea metadata.
   "updated": "YYYY-MM-DD",
   "completedAt": "YYYY-MM-DD (optional)",
   "cancelledAt": "YYYY-MM-DD (optional)",
-  "source": "manual|jira:XXX|idea:slug (optional)"
+  "source": "manual|jira:XXX|idea:slug (optional)",
+  "sessionId": "string (optional) - active session ID working on this task",
+  "transcriptPath": "string (optional) - session transcript file path"
 }
 ```
 
@@ -60,13 +62,15 @@ Manages the `state.json` file that stores all task and idea metadata.
 | Status | Description |
 |--------|-------------|
 | `pending` | Task created but not started |
-| `in_progress` | **Currently active** (max ONE at a time) |
-| `paused` | Was in_progress, switched to another task |
+| `in_progress` | **Currently active** (multiple allowed across different sessions) |
+| `paused` | Manually paused by user |
 | `waiting_approval` | Waiting for user approval |
 | `completed` | Task finished and archived |
 | `cancelled` | Task cancelled |
 
-**CONSTRAINT:** Only ONE task can have `status: "in_progress"` at any time.
+**CONSTRAINT:** Multiple tasks may have `status: "in_progress"` simultaneously, provided each is in a **different session** (unique `sessionId`). A single session should only work on one task at a time.
+
+**Concurrent Access Advisory:** When multiple sessions modify `state.json`, each session must read → backup → modify → write atomically. Session hooks track `sessionId` per task to prevent accidental cross-session interference.
 
 ### QuickIdeaObject Schema
 
@@ -101,7 +105,7 @@ Manages the `state.json` file that stores all task and idea metadata.
 
 1. **Read current state**
    ```bash
-   Read: ~/.claude/task-manager/state.json
+   Read: ~/task-manager/state.json
    ```
 
 2. **Create backup**
@@ -115,7 +119,7 @@ Manages the `state.json` file that stores all task and idea metadata.
 
 5. **Verify write**
    ```bash
-   Read: ~/.claude/task-manager/state.json
+   Read: ~/task-manager/state.json
    # Confirm JSON is valid
    ```
 
@@ -131,7 +135,7 @@ Before writing, check:
 - [ ] Required fields exist on all objects
 - [ ] Status values are valid enum values
 - [ ] Dates are valid YYYY-MM-DD format
-- [ ] **Only ONE task has status `in_progress`** (critical constraint)
+- [ ] **Each `in_progress` task has a unique `sessionId`** (no two in_progress tasks share the same session)
 
 ---
 
@@ -147,9 +151,9 @@ Before writing, check:
 2. **If backup also corrupted, rebuild from disk**
    ```bash
    # Scan task directories
-   ls ~/.claude/task-manager/tasks/active/
-   ls ~/.claude/task-manager/tasks/completed/
-   ls ~/.claude/task-manager/tasks/cancelled/
+   ls ~/task-manager/tasks/active/
+   ls ~/task-manager/tasks/completed/
+   ls ~/task-manager/tasks/cancelled/
 
    # Read each task.md and extract metadata
    # Rebuild state.json from extracted data
@@ -169,7 +173,7 @@ Before writing, check:
 
 1. **Read state first**
    ```
-   state = Read(~/.claude/task-manager/state.json)
+   state = Read(~/task-manager/state.json)
    ```
 
 2. **Perform operation**
@@ -186,7 +190,8 @@ Before writing, check:
 | Command | State Operation |
 |---------|-----------------|
 | `/task-manager:create` | Add to `tasks.active`, increment `nextTaskId` |
-| `/task-manager:continue` | Update task `status` and `updated` |
+| `/task-manager:continue` | Update task `status`, `updated`, `sessionId` |
+| `/task-manager:pause` | Set `status` to `paused`, clear `sessionId` |
 | `/task-manager:complete` | Move from `active` to `completed`, set `completedAt` |
 | `/task-manager:idea` | Add to `ideas.quick` or `ideas.detailed` |
 | `/task-manager:sync` | Rebuild state from disk files |

@@ -36,13 +36,13 @@ Mark a task as completed and archive it. **CRITICAL: This command ALWAYS require
 ### Step 1: Parse and Locate Task
 
 ```bash
-TASK_DIR=$(ls -d ~/.claude/task-manager/tasks/active/TASK-XXX-* 2>/dev/null | head -1)
+TASK_DIR=$(ls -d ~/task-manager/tasks/active/TASK-XXX-* 2>/dev/null | head -1)
 ```
 
 If not found in active:
 ```
 Error: Task TASK-XXX not found in active tasks.
-Check ~/.claude/task-manager/tasks/completed/ if already completed.
+Check ~/task-manager/tasks/completed/ if already completed.
 ```
 
 ### Step 2: Read Task State
@@ -111,7 +111,7 @@ Please complete these items first, or use `/task-manager:complete TASK-XXX --for
 
 This will:
 1. Mark task as `completed`
-2. Move to `~/.claude/task-manager/tasks/completed/`
+2. Move to `~/task-manager/tasks/completed/`
 3. Update state.json
 
 Reply with:
@@ -147,7 +147,7 @@ Invalid/rejection responses:
 ```markdown
 ### <current date>
 - Task completed with user approval
-- Archived to ~/.claude/task-manager/tasks/completed/
+- Archived to ~/task-manager/tasks/completed/
 ```
 
 #### 6.3 Check Completion Checkbox
@@ -160,7 +160,7 @@ Invalid/rejection responses:
 #### 6.4 Move to Completed
 
 ```bash
-mv ~/.claude/task-manager/tasks/active/TASK-XXX-<slug> ~/.claude/task-manager/tasks/completed/
+mv ~/task-manager/tasks/active/TASK-XXX-<slug> ~/task-manager/tasks/completed/
 ```
 
 #### 6.5 Update State
@@ -187,10 +187,10 @@ state.tasks.completed.push(task)
 state.lastUpdated = "<ISO-8601 timestamp>"
 
 # 3. Write state
-Write: ~/.claude/task-manager/state.json
+Write: ~/task-manager/state.json
 
 # 4. Verify write
-Read: ~/.claude/task-manager/state.json
+Read: ~/task-manager/state.json
 ```
 
 ### Step 7: Output Confirmation
@@ -200,7 +200,7 @@ Read: ~/.claude/task-manager/state.json
 
 **Title:** <title>
 **Completed:** <current datetime>
-**Location:** ~/.claude/task-manager/tasks/completed/TASK-XXX-<slug>/
+**Location:** ~/task-manager/tasks/completed/TASK-XXX-<slug>/
 
 ### Summary
 - Duration: X days
@@ -208,7 +208,7 @@ Read: ~/.claude/task-manager/state.json
 - Subtasks: Z completed
 
 Task has been archived. View anytime at:
-`~/.claude/task-manager/tasks/completed/TASK-XXX-<slug>/task.md`
+`~/task-manager/tasks/completed/TASK-XXX-<slug>/task.md`
 ```
 
 ---
@@ -235,7 +235,7 @@ To cancel instead of complete:
 
 This will:
 1. Mark as `cancelled`
-2. Move to `~/.claude/task-manager/tasks/cancelled/`
+2. Move to `~/task-manager/tasks/cancelled/`
 3. Record cancellation reason
 
 ---
@@ -292,7 +292,7 @@ User: yes
 
 **Title:** Add Dark Mode Support
 **Completed:** 2025-01-18 14:30:00
-**Location:** ~/.claude/task-manager/tasks/completed/TASK-010-add-dark-mode-support/
+**Location:** ~/task-manager/tasks/completed/TASK-010-add-dark-mode-support/
 
 ### Summary
 - Duration: 8 days

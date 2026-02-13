@@ -54,7 +54,7 @@ If `--detailed` NOT specified:
 #### 2.1 Read Current State
 
 ```bash
-Read: ~/.claude/task-manager/state.json
+Read: ~/task-manager/state.json
 ```
 
 #### 2.2 Add Idea to State
@@ -81,7 +81,7 @@ state.ideas.quick.push({
 state.lastUpdated = "<ISO-8601 timestamp>"
 
 # 4. Write state
-Write: ~/.claude/task-manager/state.json
+Write: ~/task-manager/state.json
 ```
 
 #### 2.3 Output Confirmation
@@ -137,7 +137,7 @@ Use template from plugin's `templates/idea.md` and fill variables:
 **Task'a dönüştürmek için:** `/task-manager:create --from-idea <slug>`
 ```
 
-Write to: `~/.claude/task-manager/tasks/backlog/<slug>.md`
+Write to: `~/task-manager/tasks/backlog/<slug>.md`
 
 #### 3.3 Update State with Detailed Idea
 
@@ -164,7 +164,7 @@ state.ideas.detailed.push({
 state.lastUpdated = "<ISO-8601 timestamp>"
 
 # 4. Write state
-Write: ~/.claude/task-manager/state.json
+Write: ~/task-manager/state.json
 ```
 
 #### 3.4 Output Confirmation
@@ -174,7 +174,7 @@ Write: ~/.claude/task-manager/state.json
 
 **Title:** <title>
 **Priority:** <priority>
-**Location:** ~/.claude/task-manager/tasks/backlog/<slug>.md
+**Location:** ~/task-manager/tasks/backlog/<slug>.md
 
 Would you like to add more details now?
 - Description
@@ -236,7 +236,7 @@ User: /task-manager:idea "Add webhook retry with exponential backoff"
 
 **Title:** Add webhook retry with exponential backoff
 **Priority:** MEDIUM
-**Location:** ~/.claude/task-manager/tasks/backlog/ideas.md
+**Location:** ~/task-manager/tasks/backlog/ideas.md
 
 Quick capture complete.
 ```
@@ -249,7 +249,7 @@ User: /task-manager:idea "Implement distributed tracing" --detailed --priority H
 
 **Title:** Implement distributed tracing
 **Priority:** HIGH
-**Location:** ~/.claude/task-manager/tasks/backlog/implement-distributed-tracing.md
+**Location:** ~/task-manager/tasks/backlog/implement-distributed-tracing.md
 
 File created with template. Add details:
 - What problem does this solve?
@@ -263,7 +263,7 @@ User: /task-manager:idea "Fix null pointer in handler"
 User: /task-manager:idea "Add metrics for queue depth"
 User: /task-manager:idea "Document API rate limits"
 
-All 3 ideas added to ~/.claude/task-manager/tasks/backlog/ideas.md
+All 3 ideas added to ~/task-manager/tasks/backlog/ideas.md
 ```
 
 ---

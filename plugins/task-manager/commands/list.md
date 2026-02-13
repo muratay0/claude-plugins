@@ -42,7 +42,7 @@ From $ARGUMENTS extract filter:
 All data comes from state.json for fast retrieval:
 
 ```bash
-Read: ~/.claude/task-manager/state.json
+Read: ~/task-manager/state.json
 ```
 
 ### Step 3: Extract Task Info from State
@@ -92,20 +92,18 @@ Run `/task-manager:list --ideas` for full idea list.
 ```markdown
 ## Active Tasks
 
-| ID | Title | Status | Last Updated |
-|----|-------|--------|--------------|
-| TASK-006 | Reverse Identity Bulk Migration | **in_progress** | 2024-12-10 |
-| TASK-007 | Reverse Identity Catchup | paused | 2025-01-15 |
-| TASK-001 | Victoria Prometheus Migration | pending | 2024-12-04 |
-| ... | ... | ... | ... |
+| ID | Title | Status | Session | Last Updated |
+|----|-------|--------|---------|--------------|
+| TASK-006 | Reverse Identity Bulk Migration | **in_progress** | a1b2.. | 2024-12-10 |
+| TASK-007 | Reverse Identity Catchup | **in_progress** | c3d4.. | 2025-01-15 |
+| TASK-001 | Victoria Prometheus Migration | pending | - | 2024-12-04 |
+| ... | ... | ... | ... | ... |
 
 Total: X active tasks
-- In Progress: 1 (max)
+- In Progress: N (across M sessions)
 - Paused: Y
 - Pending: Z
 ```
-
-**Note:** Only ONE task can be `in_progress` at a time. Others are `paused` or `pending`.
 
 #### Completed Only (--completed)
 

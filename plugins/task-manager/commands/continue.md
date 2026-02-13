@@ -5,14 +5,14 @@ argument-hint: <TASK-ID>
 
 # Task Continue Workflow
 
-Version: 1.1.0
+Version: 2.0.0
 Last Updated: 2026-01-28
 
 ## Purpose
 
 Resume work on an existing task by reading its current state, understanding progress, and continuing from where it left off. This enables session continuity across Claude Code sessions.
 
-**IMPORTANT:** Only ONE task can be `in_progress` at a time. When switching to a new task, the current in_progress task is automatically set to `paused`.
+**IMPORTANT:** Multiple tasks can be `in_progress` across different sessions. Each session should work on only one task at a time. Tasks are tracked with `sessionId` for cross-session awareness.
 
 ---
 
@@ -25,7 +25,7 @@ pending → in_progress → completed
 ```
 
 - `pending` - Not started yet
-- `in_progress` - Currently active (only ONE allowed)
+- `in_progress` - Currently active (multiple allowed across different sessions)
 - `paused` - Was in_progress, switched to another task
 - `completed` - Done
 
@@ -56,13 +56,13 @@ Extract TASK-ID from $ARGUMENTS:
 
 ```bash
 # Read state.json for fast lookup
-Read: ~/.claude/task-manager/state.json
+Read: ~/task-manager/state.json
 
 # Search in state.tasks.active first
 task = state.tasks.active.find(t => t.id === "TASK-XXX")
 if (task) {
   TASK_STATUS = "active"
-  TASK_DIR = ~/.claude/task-manager/tasks/active/TASK-XXX-<task.slug>/
+  TASK_DIR = ~/task-manager/tasks/active/TASK-XXX-<task.slug>/
 }
 
 # If not found, check completed
@@ -70,13 +70,13 @@ if (!task) {
   task = state.tasks.completed.find(t => t.id === "TASK-XXX")
   if (task) {
     TASK_STATUS = "completed"
-    TASK_DIR = ~/.claude/task-manager/tasks/completed/TASK-XXX-<task.slug>/
+    TASK_DIR = ~/task-manager/tasks/completed/TASK-XXX-<task.slug>/
   }
 }
 
 # Fallback to filesystem if not in state
 if (!task) {
-  TASK_DIR=$(ls -d ~/.claude/task-manager/tasks/active/TASK-XXX-* 2>/dev/null | head -1)
+  TASK_DIR=$(ls -d ~/task-manager/tasks/active/TASK-XXX-* 2>/dev/null | head -1)
 }
 ```
 
@@ -130,25 +130,43 @@ Based on analysis:
 | Task is `in_progress` with incomplete subtasks | Continue from first incomplete subtask |
 | Task is `pending` | Start from beginning of plan |
 
-### Step 7: Pause Current In-Progress Task (if any)
+### Step 7: Session Affinity Check
 
-**CRITICAL:** Only one task can be `in_progress` at a time.
+Check if this task is already being worked on in another session:
 
 ```bash
-# Check for existing in_progress task
-current_task = state.tasks.active.find(t => t.status === "in_progress")
+# Check if task has a sessionId from another session
+if (task.sessionId && task.sessionId !== CURRENT_SESSION_ID) {
+  # Warn user about cross-session activity
+  Output: """
+  **Warning:** This task was last worked on in a different session.
+  - Session: {task.sessionId}
+  - Transcript: {task.transcriptPath}
+
+  To return to that session (in another terminal):
+    `claude --resume {task.sessionId}`
+
+  Or continue here — session tracking will be updated to this session.
+  """
+}
+
+# Check if THIS session already has an in_progress task
+current_task = state.tasks.active.find(
+  t => t.status === "in_progress" && t.sessionId === CURRENT_SESSION_ID
+)
 
 if (current_task && current_task.id !== "TASK-XXX") {
-  # Pause the current task
+  # Pause the current task in THIS session only
+  # sessionId is KEPT as "last worked on by" reference
   current_task.status = "paused"
   current_task.updated = "<YYYY-MM-DD>"
 
   # Update its task.md
-  Edit: ~/.claude/task-manager/tasks/active/<current_task folder>/task.md
+  Edit: ~/task-manager/tasks/active/<current_task folder>/task.md
   Change: "- **Durum:** in_progress" to "- **Durum:** paused"
 
   # Notify user
-  Output: "**Note:** TASK-YYY paused (was in_progress)"
+  Output: "**Note:** TASK-YYY paused in this session (was in_progress)"
 }
 ```
 
@@ -175,11 +193,17 @@ Copy: state.json → state.backup.json
 task = state.tasks.active.find(t => t.id === "TASK-XXX")
 task.status = "in_progress"
 task.updated = "<YYYY-MM-DD>"
+task.sessionId = CURRENT_SESSION_ID
+task.transcriptPath = CURRENT_TRANSCRIPT_PATH  # if available
 state.lastUpdated = "<ISO-8601 timestamp>"
 
 # 3. Write state
-Write: ~/.claude/task-manager/state.json
+Write: ~/task-manager/state.json
 ```
+
+**Session ID sources** (in priority order):
+1. `$TASK_MANAGER_SESSION_ID` environment variable (set by session-start hook)
+2. Not available → omit sessionId field
 
 ### Step 9: Add Progress Note
 
@@ -295,7 +319,7 @@ You can check the Jira ticket for additional context.
 
 ### Completed Tasks
 
-If task is in `~/.claude/task-manager/tasks/completed/`:
+If task is in `~/task-manager/tasks/completed/`:
 
 ```markdown
 ## Task Already Completed
@@ -354,7 +378,7 @@ User: /task-manager:continue TASK-007
 **Title:** Reverse Identity Catchup Job
 **Status:** in_progress
 **Last Updated:** 2025-01-15
-**Location:** ~/.claude/task-manager/tasks/active/TASK-007-reverse-identity-catchup/
+**Location:** ~/task-manager/tasks/active/TASK-007-reverse-identity-catchup/
 
 ### Current Progress
 - Plan: 2/5 items completed

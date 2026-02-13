@@ -38,7 +38,7 @@ Manually trigger a checkpoint for the current in_progress task. Use this when yo
 ### Step 1: Find Active Task
 
 ```bash
-Read: ~/.claude/task-manager/state.json
+Read: ~/task-manager/state.json
 
 # Find in_progress task
 active_task = state.tasks.active.find(t => t.status === "in_progress")
@@ -52,7 +52,7 @@ if (!active_task) {
 ### Step 2: Read Current Task State
 
 ```bash
-TASK_DIR = ~/.claude/task-manager/tasks/active/<active_task.id>-<active_task.slug>/
+TASK_DIR = ~/task-manager/tasks/active/<active_task.id>-<active_task.slug>/
 Read: <TASK_DIR>/task.md
 ```
 
@@ -87,7 +87,8 @@ Edit: <TASK_DIR>/task.md
 ### Step 5: Reset Tool Counter
 
 ```bash
-echo "0" > ~/.claude/task-manager/.tool-count
+# Session-scoped counter (uses TASK_MANAGER_SESSION_ID from session-start hook)
+echo "0" > ~/task-manager/.tool-count-${TASK_MANAGER_SESSION_ID}
 ```
 
 ### Step 6: Update State
@@ -101,7 +102,7 @@ active_task.updated = "<YYYY-MM-DD>"
 state.lastUpdated = "<ISO-8601 timestamp>"
 
 # Write
-Write: ~/.claude/task-manager/state.json
+Write: ~/task-manager/state.json
 ```
 
 ### Step 7: Output Confirmation

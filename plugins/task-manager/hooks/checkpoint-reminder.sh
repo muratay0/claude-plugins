@@ -1,11 +1,20 @@
 #!/bin/bash
-# Task Manager Checkpoint Reminder Hook
-# This hook tracks tool calls and reminds Claude to checkpoint
+# Task Manager Checkpoint Reminder Hook (Multi-Session)
+# Tracks tool calls per session and reminds Claude to checkpoint
 
-TASK_MANAGER_DIR="$HOME/.claude/task-manager"
-COUNTER_FILE="$TASK_MANAGER_DIR/.tool-count"
+TASK_MANAGER_DIR="$HOME/task-manager"
 CHECKPOINT_INTERVAL=${CHECKPOINT_INTERVAL:-5}
 STATE_FILE="$TASK_MANAGER_DIR/state.json"
+
+# Read session_id from stdin JSON — no fallback, exit if missing
+INPUT=$(cat)
+SESSION_ID=$(echo "$INPUT" | jq -r '.session_id // ""' 2>/dev/null)
+
+if [ -z "$SESSION_ID" ]; then
+    exit 0
+fi
+
+COUNTER_FILE="$TASK_MANAGER_DIR/.tool-count-${SESSION_ID}"
 
 # Check if there's an active task
 has_active_task() {

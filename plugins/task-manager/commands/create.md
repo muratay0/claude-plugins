@@ -49,7 +49,7 @@ Extract from $ARGUMENTS:
 
 ```bash
 # Read current state
-Read: ~/.claude/task-manager/state.json
+Read: ~/task-manager/state.json
 
 # Extract nextTaskId
 NEXT_ID = state.nextTaskId
@@ -76,7 +76,7 @@ Extract: summary, description, type, priority
 
 **If from idea:**
 ```bash
-Read: ~/.claude/task-manager/tasks/backlog/<idea-slug>.md
+Read: ~/task-manager/tasks/backlog/<idea-slug>.md
 ```
 Extract: title, description, motivasyon, yaklaşım
 
@@ -87,13 +87,13 @@ Extract: title, description, motivasyon, yaklaşım
 SLUG=$(echo "<TITLE>" | tr '[:upper:]' '[:lower:]' | tr ' ' '-' | tr -cd '[:alnum:]-')
 
 # Ensure plugin data directory exists
-mkdir -p ~/.claude/task-manager/tasks/{active,completed,cancelled,backlog}
+mkdir -p ~/task-manager/tasks/{active,completed,cancelled,backlog}
 
 # Create task directory structure
-mkdir -p ~/.claude/task-manager/tasks/active/TASK-XXX-<SLUG>
-mkdir -p ~/.claude/task-manager/tasks/active/TASK-XXX-<SLUG>/subtasks
-mkdir -p ~/.claude/task-manager/tasks/active/TASK-XXX-<SLUG>/outputs
-mkdir -p ~/.claude/task-manager/tasks/active/TASK-XXX-<SLUG>/context
+mkdir -p ~/task-manager/tasks/active/TASK-XXX-<SLUG>
+mkdir -p ~/task-manager/tasks/active/TASK-XXX-<SLUG>/subtasks
+mkdir -p ~/task-manager/tasks/active/TASK-XXX-<SLUG>/outputs
+mkdir -p ~/task-manager/tasks/active/TASK-XXX-<SLUG>/context
 ```
 
 ### Step 4.1: Initialize Context Files
@@ -102,11 +102,11 @@ Create initial context files using plugin templates:
 
 ```bash
 # Create decisions.md from template
-Copy: plugin/templates/decisions.md → ~/.claude/task-manager/tasks/active/TASK-XXX-<SLUG>/context/decisions.md
+Copy: plugin/templates/decisions.md → ~/task-manager/tasks/active/TASK-XXX-<SLUG>/context/decisions.md
 Replace: {{TASK_ID}} with TASK-XXX
 
 # Create research.md from template
-Copy: plugin/templates/research.md → ~/.claude/task-manager/tasks/active/TASK-XXX-<SLUG>/context/research.md
+Copy: plugin/templates/research.md → ~/task-manager/tasks/active/TASK-XXX-<SLUG>/context/research.md
 Replace: {{TASK_ID}} with TASK-XXX
 ```
 
@@ -194,16 +194,16 @@ state.nextTaskId = state.nextTaskId + 1
 state.lastUpdated = "<ISO-8601 timestamp>"
 
 # 3. Write state
-Write: ~/.claude/task-manager/state.json
+Write: ~/task-manager/state.json
 
 # 4. Verify write
-Read: ~/.claude/task-manager/state.json
+Read: ~/task-manager/state.json
 # Confirm JSON is valid
 ```
 
 ### Step 7: Update Idea (if from-idea)
 
-Edit `~/.claude/task-manager/tasks/backlog/<idea-slug>.md`:
+Edit `~/task-manager/tasks/backlog/<idea-slug>.md`:
 - Add note: `[TASK'A DÖNÜŞTÜRÜLDÜ: TASK-XXX - <date>]`
 
 ### Step 8: Output Summary
@@ -213,7 +213,7 @@ Edit `~/.claude/task-manager/tasks/backlog/<idea-slug>.md`:
 
 **ID:** TASK-XXX
 **Title:** <title>
-**Location:** ~/.claude/task-manager/tasks/active/TASK-XXX-<slug>/task.md
+**Location:** ~/task-manager/tasks/active/TASK-XXX-<slug>/task.md
 **Source:** <manual|jira:<ID>|idea:<slug>>
 
 Next steps:
@@ -225,14 +225,14 @@ Next steps:
 ## Constants
 
 ```
-PLUGIN_DATA: ~/.claude/task-manager/
-STATE_FILE: ~/.claude/task-manager/state.json
-STATE_BACKUP: ~/.claude/task-manager/state.backup.json
-TASK_ROOT: ~/.claude/task-manager/tasks/
-ACTIVE_DIR: ~/.claude/task-manager/tasks/active/
-COMPLETED_DIR: ~/.claude/task-manager/tasks/completed/
-BACKLOG_DIR: ~/.claude/task-manager/tasks/backlog/
-TEMPLATE_DIR: ~/.claude/task-manager/tasks/templates/
+PLUGIN_DATA: ~/task-manager/
+STATE_FILE: ~/task-manager/state.json
+STATE_BACKUP: ~/task-manager/state.backup.json
+TASK_ROOT: ~/task-manager/tasks/
+ACTIVE_DIR: ~/task-manager/tasks/active/
+COMPLETED_DIR: ~/task-manager/tasks/completed/
+BACKLOG_DIR: ~/task-manager/tasks/backlog/
+TEMPLATE_DIR: ~/task-manager/tasks/templates/
 ```
 
 **Note:** All paths are relative to user's home directory, not the current project.
@@ -260,7 +260,7 @@ Output:
 ## Task Created
 **ID:** TASK-012
 **Title:** Add dark mode support
-**Location:** ~/.claude/task-manager/tasks/active/TASK-012-add-dark-mode-support/task.md
+**Location:** ~/task-manager/tasks/active/TASK-012-add-dark-mode-support/task.md
 **Source:** manual
 ```
 
@@ -272,7 +272,7 @@ Output:
 ## Task Created
 **ID:** TASK-013
 **Title:** Implement webhook retry mechanism
-**Location:** ~/.claude/task-manager/tasks/active/TASK-013-implement-webhook-retry-mechanism/task.md
+**Location:** ~/task-manager/tasks/active/TASK-013-implement-webhook-retry-mechanism/task.md
 **Source:** jira:AT-14500
 ```
 
@@ -284,7 +284,7 @@ Output:
 ## Task Created
 **ID:** TASK-014
 **Title:** Implement Continuous Profiling
-**Location:** ~/.claude/task-manager/tasks/active/TASK-014-implement-continuous-profiling/task.md
+**Location:** ~/task-manager/tasks/active/TASK-014-implement-continuous-profiling/task.md
 **Source:** idea:continuous-profiling
 
 Note: Original idea file updated with task reference.

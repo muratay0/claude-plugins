@@ -14,19 +14,20 @@ This command reminds Claude how to properly work with the task-manager system. U
 
 ---
 
-## Single Active Task Rule
+## Multi-Session Task Rule
 
-**Only ONE task can be `in_progress` at a time.**
+**Multiple tasks can be `in_progress` across different sessions.** Each session works on one task at a time.
 
 When you `/task-manager:continue TASK-XXX`:
-- Current in_progress task → automatically set to `paused`
-- TASK-XXX → set to `in_progress`
+- If THIS session has another in_progress task → that task is set to `paused`
+- Tasks in OTHER sessions are NOT affected
+- TASK-XXX → set to `in_progress` with current `sessionId`
 
 Status flow:
 ```
 pending → in_progress → completed
             ↓    ↑
-          paused
+          paused (manual only)
 ```
 
 ---
@@ -84,7 +85,7 @@ When task status changes:
 
 ```bash
 # 1. Backup state
-cp ~/.claude/task-manager/state.json ~/.claude/task-manager/state.backup.json
+cp ~/task-manager/state.json ~/task-manager/state.backup.json
 
 # 2. Update state.json
 - Change status field (pending → in_progress → completed)
@@ -100,9 +101,10 @@ Read state.json to confirm
 ## File Locations
 
 ```
-~/.claude/task-manager/
+~/task-manager/
 ├── state.json                    # Source of truth for all tasks
 ├── state.backup.json             # Backup before changes
+├── .tool-count-{session_id}      # Per-session tool call counter
 └── tasks/
     ├── active/TASK-XXX-slug/
     │   ├── task.md               # Main task file
@@ -121,6 +123,7 @@ Read state.json to confirm
 |---------|---------|
 | `/task-manager:list` | Show all tasks |
 | `/task-manager:continue TASK-XXX` | Resume a task |
+| `/task-manager:pause [TASK-XXX]` | Pause a task, clear session binding |
 | `/task-manager:complete TASK-XXX` | Complete with approval |
 | `/task-manager:checkpoint` | **Manual checkpoint** (save now!) |
 | `/task-manager:checkpoint "note"` | Checkpoint with note |

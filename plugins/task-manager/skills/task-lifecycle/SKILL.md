@@ -184,18 +184,21 @@ Every checkpoint in task.md must include:
 
 ### Directory Structure
 ```
-~/.claude/task-manager/tasks/active/TASK-XXX-slug/
-├── task.md                    # Status + progress notes (ALWAYS current)
-├── context/
-│   ├── research.md            # All findings (append-only)
-│   ├── decisions.md           # All decisions (append-only)
-│   ├── code-analysis.md       # Code snippets + analysis
-│   ├── api-responses.md       # Important API responses
-│   └── scratch.md             # Temporary notes, working memory
-├── subtasks/
-│   └── XXX-*.md               # Subtask files
-└── outputs/
-    └── *                      # Deliverables
+~/task-manager/
+├── .tool-count-{session_id}       # Per-session tool call counter
+├── state.json                     # Source of truth (with sessionId per task)
+└── tasks/active/TASK-XXX-slug/
+    ├── task.md                    # Status + progress notes (ALWAYS current)
+    ├── context/
+    │   ├── research.md            # All findings (append-only)
+    │   ├── decisions.md           # All decisions (append-only)
+    │   ├── code-analysis.md       # Code snippets + analysis
+    │   ├── api-responses.md       # Important API responses
+    │   └── scratch.md             # Temporary notes, working memory
+    ├── subtasks/
+    │   └── XXX-*.md               # Subtask files
+    └── outputs/
+        └── *                      # Deliverables
 ```
 
 ### File Size Management
@@ -211,8 +214,9 @@ If a context file gets large (>500 lines):
 
 ### When New Session Starts
 
-1. **Detect active task**: Check `state.json` for in_progress tasks
-2. **Load context cascade**:
+1. **Detect active task**: Check `state.json` for in_progress tasks matching current `sessionId`
+2. **Cross-session awareness**: If task has a different `sessionId`, warn before resuming
+3. **Load context cascade**:
    ```
    task.md → Current status, plan, progress
    context/research.md → Recent findings (last 50 lines)
