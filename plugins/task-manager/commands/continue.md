@@ -201,9 +201,17 @@ state.lastUpdated = "<ISO-8601 timestamp>"
 Write: ~/task-manager/state.json
 ```
 
-**Session ID sources** (in priority order):
-1. `$TASK_MANAGER_SESSION_ID` environment variable (set by session-start hook)
-2. Not available → omit sessionId field
+**Session ID detection via PPID mapping:**
+
+PostToolUse hooks write the session ID to `~/task-manager/.session-{PPID}`. Since Claude's Bash tool and the hooks share the same parent process (Claude CLI), `$PPID` is the same in both contexts.
+
+```bash
+# Read current session ID — PPID bridges hook context to Bash context
+Bash: cat ~/task-manager/.session-$PPID 2>/dev/null
+CURRENT_SESSION_ID = <output>
+```
+
+If the file doesn't exist yet (first tool call), run any Bash command first to trigger the PostToolUse hook, then read the session ID.
 
 ### Step 9: Add Progress Note
 

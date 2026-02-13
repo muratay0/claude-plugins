@@ -58,10 +58,11 @@ Session def456 (separate terminal):
 
 When a new Claude session starts:
 1. Reads `session_id` from stdin
-2. Writes `TASK_MANAGER_SESSION_ID` to `$CLAUDE_ENV_FILE` (available throughout session)
-3. Checks state.json for in_progress tasks
-4. If active tasks found, injects message listing them with session info
-5. Warns if a task is active in another session
+2. Checks state.json for in_progress tasks
+3. If active tasks found, injects message listing them with session info
+4. Warns if a task is active in another session
+
+**Note:** The session ID is NOT available as an environment variable. PostToolUse hooks write a PPID mapping file (`~/task-manager/.session-{PPID}`) on every tool call. Commands detect the session ID via `cat ~/task-manager/.session-$PPID` — this works because hooks and Claude's Bash tool share the same parent process (Claude CLI).
 
 ### SessionEnd
 
@@ -124,4 +125,9 @@ rm ~/task-manager/.tool-count-*
 - Counter stored at: `~/task-manager/.tool-count-{session_id}` (per session)
 - Hooks defined in: `hooks/hooks.json`
 - Scripts location: `hooks/` directory
-- Session ID source: stdin JSON `session_id` field
+- Session ID source (hooks): stdin JSON `session_id` field
+- Session ID source (commands/prompts): PPID mapping file
+  ```bash
+  cat ~/task-manager/.session-$PPID 2>/dev/null
+  ```
+- PPID bridge: hooks and Bash tool share parent (Claude CLI PID), so `.session-{PPID}` is unique per session

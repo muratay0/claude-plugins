@@ -33,6 +33,10 @@ Manually pause an in_progress task. The `sessionId` and `transcriptPath` are pre
 ```bash
 Read: ~/task-manager/state.json
 
+# Detect current session ID via PPID mapping
+Bash: cat ~/task-manager/.session-$PPID 2>/dev/null
+CURRENT_SESSION_ID = <output>
+
 if (TASK-ID provided) {
   task = state.tasks.active.find(t => t.id === "TASK-XXX")
 } else {

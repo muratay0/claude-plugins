@@ -33,6 +33,10 @@ fi
 # Ensure directory exists (only when active task)
 mkdir -p "$TASK_MANAGER_DIR"
 
+# Write session-to-PPID mapping so Claude can discover its own session ID
+# Claude's Bash tool and this hook share the same parent process (Claude CLI)
+echo "$SESSION_ID" > "$TASK_MANAGER_DIR/.session-${PPID}"
+
 # Initialize counter if not exists
 if [ ! -f "$COUNTER_FILE" ]; then
     echo "0" > "$COUNTER_FILE"

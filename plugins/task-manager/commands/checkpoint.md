@@ -87,8 +87,11 @@ Edit: <TASK_DIR>/task.md
 ### Step 5: Reset Tool Counter
 
 ```bash
-# Session-scoped counter (uses TASK_MANAGER_SESSION_ID from session-start hook)
-echo "0" > ~/task-manager/.tool-count-${TASK_MANAGER_SESSION_ID}
+# Read session ID from PPID mapping, then reset session-scoped counter
+SESSION_ID=$(cat ~/task-manager/.session-$PPID 2>/dev/null)
+if [ -n "$SESSION_ID" ]; then
+  echo "0" > ~/task-manager/.tool-count-${SESSION_ID}
+fi
 ```
 
 ### Step 6: Update State

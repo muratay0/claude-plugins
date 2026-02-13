@@ -12,6 +12,11 @@ if [ -z "$SESSION_ID" ]; then
     exit 0
 fi
 
+# Write session-to-PPID mapping
+TASK_MANAGER_DIR="$HOME/task-manager"
+mkdir -p "$TASK_MANAGER_DIR"
+echo "$SESSION_ID" > "$TASK_MANAGER_DIR/.session-${PPID}"
+
 # Extract file_path from tool_input
 FILE_PATH=$(echo "$INPUT" | jq -r '.tool_input.file_path // ""' 2>/dev/null)
 

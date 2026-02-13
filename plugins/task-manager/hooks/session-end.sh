@@ -1,6 +1,6 @@
 #!/bin/bash
 # Task Manager Session End Hook
-# Cleans up session-specific counter file on session close
+# Cleans up session-specific files on session close
 
 TASK_MANAGER_DIR="$HOME/task-manager"
 
@@ -16,6 +16,12 @@ fi
 COUNTER_FILE="$TASK_MANAGER_DIR/.tool-count-${SESSION_ID}"
 if [ -f "$COUNTER_FILE" ]; then
     rm -f "$COUNTER_FILE"
+fi
+
+# Clean up session-to-PPID mapping file
+SESSION_FILE="$TASK_MANAGER_DIR/.session-${PPID}"
+if [ -f "$SESSION_FILE" ]; then
+    rm -f "$SESSION_FILE"
 fi
 
 exit 0

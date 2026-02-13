@@ -13,11 +13,6 @@ if [ -z "$SESSION_ID" ]; then
     exit 0
 fi
 
-# Write session_id to CLAUDE_ENV_FILE so it's accessible throughout the session
-if [ -n "$CLAUDE_ENV_FILE" ]; then
-    echo "TASK_MANAGER_SESSION_ID=${SESSION_ID}" >> "$CLAUDE_ENV_FILE"
-fi
-
 # Check if state.json exists
 if [ ! -f "$STATE_FILE" ]; then
     exit 0
@@ -36,18 +31,18 @@ fi
 
 # Inject message to Claude about active tasks
 {
-    echo "[SESSION START] Active tasks detected:"
+    echo "[SESSION START] Active tasks detected (this session: ${SESSION_ID}):"
     echo "$ACTIVE_TASKS" | while IFS='|' read -r task_id title session_id; do
         task_id=$(echo "$task_id" | xargs)
         title=$(echo "$title" | xargs)
         session_id=$(echo "$session_id" | xargs)
         if [ "$session_id" != "none" ] && [ "$session_id" != "$SESSION_ID" ]; then
-            echo "  - ${task_id}: ${title} (active in another session: ${session_id})"
+            echo "  - ${task_id}: ${title} (active in session: ${session_id})"
         else
             echo "  - ${task_id}: ${title}"
         fi
     done
-    echo "Use /continue to resume a task."
+    echo "Use /task-manager:continue <TASK-ID> to resume a task."
 } >&2
 
 exit 2
