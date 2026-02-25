@@ -191,6 +191,9 @@ Write: ~/task-manager/state.json
 
 # 4. Verify write
 Read: ~/task-manager/state.json
+
+# 5. Remove session ownership file (stops checkpoint reminders)
+Bash: rm -f ~/task-manager/.task-session-${CURRENT_SESSION_ID}
 ```
 
 ### Step 7: Output Confirmation

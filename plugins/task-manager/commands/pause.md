@@ -91,6 +91,9 @@ state.lastUpdated = "<ISO-8601 timestamp>"
 
 # 3. Write state
 Write: ~/task-manager/state.json
+
+# 4. Remove session ownership file (stops checkpoint reminders for this session)
+Bash: rm -f ~/task-manager/.task-session-${CURRENT_SESSION_ID}
 ```
 
 ### Step 4: Output Confirmation

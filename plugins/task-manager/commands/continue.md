@@ -201,6 +201,17 @@ state.lastUpdated = "<ISO-8601 timestamp>"
 Write: ~/task-manager/state.json
 ```
 
+**CRITICAL: Create session ownership file (checkpoint hook uses this):**
+
+```bash
+# Create .task-session-{SESSION_ID} so checkpoint-reminder hook knows
+# THIS session is working on a task-manager task.
+# Without this file, checkpoint reminders will NOT fire.
+echo "TASK-XXX" > ~/task-manager/.task-session-${CURRENT_SESSION_ID}
+```
+
+This file is automatically cleaned up by `session-end.sh` when the session closes.
+
 **Session ID detection via PPID mapping:**
 
 PostToolUse hooks write the session ID to `~/task-manager/.session-{PPID}`. Since Claude's Bash tool and the hooks share the same parent process (Claude CLI), `$PPID` is the same in both contexts.

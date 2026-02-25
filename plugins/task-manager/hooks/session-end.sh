@@ -18,6 +18,12 @@ if [ -f "$COUNTER_FILE" ]; then
     rm -f "$COUNTER_FILE"
 fi
 
+# Clean up session task ownership file
+TASK_SESSION_FILE="$TASK_MANAGER_DIR/.task-session-${SESSION_ID}"
+if [ -f "$TASK_SESSION_FILE" ]; then
+    rm -f "$TASK_SESSION_FILE"
+fi
+
 # Clean up session-to-PPID mapping file
 SESSION_FILE="$TASK_MANAGER_DIR/.session-${PPID}"
 if [ -f "$SESSION_FILE" ]; then
