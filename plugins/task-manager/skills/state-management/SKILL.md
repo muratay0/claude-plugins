@@ -195,6 +195,7 @@ Before writing, check:
 | `/task-manager:complete` | Move from `active` to `completed`, set `completedAt` |
 | `/task-manager:idea` | Add to `ideas.quick` or `ideas.detailed` |
 | `/task-manager:sync` | Rebuild state from disk files |
+| `/task-manager:cancelled` | Move from `active` to `cancelled`, set `cancelledAt` |
 | `/task-manager:list` | Read-only, no state modification |
 
 ---
